@@ -542,7 +542,7 @@ MonoBehaviour:
   fireCooldown: 1
   _currentHealthPercent: {fileID: 11400000, guid: a7ba78a973f0f1b4dbb3111983eec0b7, type: 2}
   _onPlayerDied: {fileID: 11400000, guid: 004cda9a136c644468b06d59f776b9a8, type: 2}
-  _fireStrategy: {fileID: 11400000, guid: af22b18c2b374854bac2372fdcccac1a, type: 2}
+  _fireStrategy: {fileID: 11400000, guid: 82967e0441e0bf44f99b22fa6ee246fa, type: 2}
   _firePoint: {fileID: 8383516398721716502}
 --- !u!54 &608845686497320999
 Rigidbody:
