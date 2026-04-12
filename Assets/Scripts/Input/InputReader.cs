@@ -21,6 +21,7 @@ namespace Platformer
         public event UnityAction EnableMouseControlCamera = delegate { };
         public event UnityAction DisableMouseControlCamera = delegate { };
         public event UnityAction<bool> Dash = delegate { };
+        public event UnityAction<bool> Fire = delegate { };
 
         public PlayerInputActions inputActions;
         public Vector2 Direction => inputActions.Player.Move.ReadValue<Vector2>();
@@ -76,7 +77,10 @@ namespace Platformer
 
         public void OnFire(InputAction.CallbackContext context)
         {
-            //noop
+            if(context.phase == InputActionPhase.Canceled)
+            {
+                Fire?.Invoke(true);
+            }
         }
 
         public void OnRun(InputAction.CallbackContext context)

@@ -31,11 +31,19 @@ namespace Platformer
         [SerializeField] float dashDuration = 0.5f;
         [SerializeField] float dashCooldown = 1f;
 
+        [Header("Fire Settings")]
+        [SerializeField] private float fireDuration = 0.5f;
+        [SerializeField] private float fireCooldown = 1f;
+
         [Header("SharedVariables")]
         [SerializeField] private FloatVariable _currentHealthPercent;
 
         [Header("GameEvents")]
         [SerializeField] private GameEvent _onPlayerDied;
+
+        [SerializeField] private FireStrategy _fireStrategy;
+        [SerializeField] private Transform _firePoint;
+        public Transform FirePoint => _firePoint;
 
         Transform mainCam;
 
@@ -54,6 +62,8 @@ namespace Platformer
         CountdownTimer jumpCooldownTimer;
         CountdownTimer dashTimer;
         CountdownTimer dashCooldownTimer;
+        CountdownTimer fireTimer;
+        CountdownTimer fireCooldownTimer;
 
         StateMachine stateMachine;
 
@@ -82,7 +92,16 @@ namespace Platformer
                 dashVelocity = 1.0f;
                 jumpCooldownTimer.Start();
             };
-            timers = new List<Timer>(4) { jumpTimer, jumpCooldownTimer, dashTimer, dashCooldownTimer };
+
+            fireTimer = new CountdownTimer(fireDuration);
+            fireCooldownTimer = new CountdownTimer(fireCooldown);
+
+            fireTimer.OnTimerStop += () =>
+            {
+                fireCooldownTimer.Start();
+            };
+
+            timers = new List<Timer>(6) { jumpTimer, jumpCooldownTimer, dashTimer, dashCooldownTimer, fireTimer, fireCooldownTimer };
 
             //State Machine
             stateMachine = new StateMachine();
@@ -91,11 +110,13 @@ namespace Platformer
             var locomotionState = new LocomotionState(this, animator);
             var jumpState = new JumpState(this, animator);
             var dashState = new DashState(this, animator);
+            var fireState = new FireState(this, animator, _fireStrategy);
 
             //Define transitions
             At(locomotionState, jumpState, new FuncPredicate(() => jumpTimer.IsRunning));
             At(locomotionState, dashState, new FuncPredicate(() => dashTimer.IsRunning));
-            Any(locomotionState, new FuncPredicate(() => groundChecker.IsGrounded && !jumpTimer.IsRunning && !dashTimer.IsRunning));
+            Any(fireState, new FuncPredicate(() => fireTimer.IsRunning));
+            Any(locomotionState, new FuncPredicate(() => groundChecker.IsGrounded && !jumpTimer.IsRunning && !dashTimer.IsRunning && !fireTimer.IsRunning));
 
             //Set initial state
             stateMachine.SetState(locomotionState);
@@ -109,12 +130,14 @@ namespace Platformer
             input.EnablePlayerActions();
             input.Jump += OnJump;
             input.Dash += OnDash;
+            input.Fire += OnFire;
         }
 
         private void OnDisable()
         {
             input.Jump -= OnJump;
             input.Dash -= OnDash;
+            input.Fire -= OnFire;
         }
 
         private void OnJump(bool performed)
@@ -138,6 +161,14 @@ namespace Platformer
             else if (!performed && dashTimer.IsRunning)
             {
                 dashTimer.Stop();
+            }
+        }
+
+        private void OnFire(bool performed)
+        {
+            if(performed && !fireTimer.IsRunning && !fireCooldownTimer.IsRunning)
+            {
+                fireTimer.Start();
             }
         }
         
