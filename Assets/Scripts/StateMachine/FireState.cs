@@ -12,7 +12,8 @@ namespace Platformer
 
         public override void OnEnter()
         {
-            animator.CrossFade(FireHash, crossFadeDuration);
+            if (animator != null)
+                animator.CrossFade(FireHash, crossFadeDuration);
             _fireStrategy.Fire(player.gameObject, player.FirePoint);
         }
     }

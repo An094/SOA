@@ -13,7 +13,7 @@ namespace Platformer
         [SerializeField] InputReader input;
 
         [Header("Stats")]
-        [SerializeField] private float _maxHP;
+        [SerializeField] private float _maxHP = 100f;
 
         [Header("Movement Settings")]
         [SerializeField] float moveSpeed = 6f;
@@ -37,6 +37,7 @@ namespace Platformer
 
         [Header("SharedVariables")]
         [SerializeField] private FloatVariable _currentHealthPercent;
+        public FloatVariable CurrentHealthPercent { get => _currentHealthPercent; set => _currentHealthPercent = value; }
 
         [Header("GameEvents")]
         [SerializeField] private GameEvent _onPlayerDied;
@@ -72,9 +73,12 @@ namespace Platformer
 
         private void Awake()
         {
-            mainCam = Camera.main.transform;
+            mainCam = Camera.main?.transform ?? null;
        
-            rb.freezeRotation = true;
+            if(rb != null)
+            {
+                rb.freezeRotation = true;
+            }
 
             //Setup Timers
             jumpTimer = new CountdownTimer(jumpDuration);
@@ -127,17 +131,23 @@ namespace Platformer
 
         private void OnEnable()
         {
-            input.EnablePlayerActions();
-            input.Jump += OnJump;
-            input.Dash += OnDash;
-            input.Fire += OnFire;
+            if(input != null)
+            {
+                input.EnablePlayerActions();
+                input.Jump += OnJump;
+                input.Dash += OnDash;
+                input.Fire += OnFire;
+            }
         }
 
         private void OnDisable()
         {
-            input.Jump -= OnJump;
-            input.Dash -= OnDash;
-            input.Fire -= OnFire;
+            if (input != null)
+            {
+                input.Jump -= OnJump;
+                input.Dash -= OnDash;
+                input.Fire -= OnFire;
+            }
         }
 
         private void OnJump(bool performed)
@@ -174,6 +184,8 @@ namespace Platformer
         
         private void Update()
         {
+            if (input == null) return;
+
             movement = new Vector3(input.Direction.x, 0f, input.Direction.y);
 
             stateMachine.Update();
@@ -223,6 +235,8 @@ namespace Platformer
 
         public void HandleMovement()
         {
+            if (mainCam == null) return;
+
             //Rotate movement direction to match camera rotation
             var adjustedDirection = Quaternion.AngleAxis(mainCam.eulerAngles.y, Vector3.up) * movement;
 
@@ -274,7 +288,7 @@ namespace Platformer
             float newHealthPercent = Mathf.Clamp01(newHealth /  _maxHP);
             _currentHealthPercent.Value = newHealthPercent;
 
-            if(newHealthPercent <= 0f)
+            if(newHealthPercent <= 0f && _onPlayerDied != null)
             {
                 _onPlayerDied.Raise();
             }
