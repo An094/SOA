@@ -5,7 +5,9 @@ using UnityEngine;
 public class FloatVariable : ScriptableObject
 {
     [SerializeField] private float _initialValue;
-    [NonSerialized] private float _value;
+
+    //[NonSerialized] public float _value;
+    public float _value;
 
     public event Action<float> OnValueChanged = delegate { };
 
