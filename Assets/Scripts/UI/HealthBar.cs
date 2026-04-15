@@ -6,6 +6,7 @@ public class HealthBar : MonoBehaviour
     [SerializeField] private Image _fillImage;
     [SerializeField] private FloatVariable _playerHealthPercent;
 
+    #region Hidden
     //private void OnEnable() => _playerHealthPercent.OnValueChanged += SetPercent;
 
     //private void OnDisable() => _playerHealthPercent.OnValueChanged -= SetPercent;
@@ -19,6 +20,7 @@ public class HealthBar : MonoBehaviour
 
     //    _fillImage.fillAmount = InPercent;
     //}
+    #endregion
 
     private void Update()
     {

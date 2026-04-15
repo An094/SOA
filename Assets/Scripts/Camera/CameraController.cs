@@ -20,13 +20,13 @@ public class CameraController : MonoBehaviour
         _onExitMiniGame.Unregister(ExitMiniGame);
     }
 
-    private void EnterMiniGame(Unit _)
+    private void EnterMiniGame()
     {
         _freeLookCamera.Priority = 0;
         _miniGameCamera.Priority = 1;
     }
 
-    private void ExitMiniGame(Unit _)
+    private void ExitMiniGame()
     {
         _freeLookCamera.Priority = 1;
         _miniGameCamera.Priority = 0;

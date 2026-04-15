@@ -9,7 +9,7 @@ public class UIController : MonoBehaviour
     [SerializeField] private GameEvent _onExitMiniGame;
     private void Start()
     {
-        SetGameOverOverlayVisibilty(false);
+        SetGameOverOverlayVisibility(false);
         _healthBarOverlay.SetActive(true);
     }
 
@@ -26,22 +26,22 @@ public class UIController : MonoBehaviour
         _onExitMiniGame.Unregister(ExitMiniGame);
     }
 
-    private void OnPlayerDied(Unit _)
+    private void OnPlayerDied()
     {
-        SetGameOverOverlayVisibilty(true);
+        SetGameOverOverlayVisibility(true);
     }
 
-    public void SetGameOverOverlayVisibilty(bool bVisible)
+    public void SetGameOverOverlayVisibility(bool bVisible)
     {
         _gameOverOverlay.SetActive(bVisible);
     }
 
-    private void EnterMiniGame(Unit _)
+    private void EnterMiniGame()
     {
         _healthBarOverlay.SetActive(false);
     }
 
-    private void ExitMiniGame(Unit _)
+    private void ExitMiniGame()
     {
         _healthBarOverlay.SetActive(true);
     }

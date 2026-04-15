@@ -4,8 +4,13 @@ using UnityEngine;
 
 public abstract class GameEvent<T> : ScriptableObject
 {
-    private List<Action<T>> _listeners = new();
-    
+    private List<Action<T>> _listeners;
+
+    private void OnEnable()
+    {
+         _listeners = new List<Action<T>>();
+    }
+
     public void Raise(T value)
     {
         for(int i = _listeners.Count - 1; i >= 0; i--)
@@ -19,12 +24,23 @@ public abstract class GameEvent<T> : ScriptableObject
 }
 
 [CreateAssetMenu(fileName = "New GameEvent", menuName = "GameEvents/GameEvent")]
-public class GameEvent : GameEvent<Unit>
+public class GameEvent : ScriptableObject
 {
-    public void Raise() => Raise(Unit.Default);
-}
+    private List<Action> _listeners;
 
-public struct Unit
-{
-    public static Unit Default = default;
+    private void OnEnable()
+    {
+        _listeners = new List<Action>();
+    }
+
+    public void Raise()
+    {
+        for (int i = _listeners.Count - 1; i >= 0; i--)
+        {
+            _listeners[i]?.Invoke();
+        }
+    }
+
+    public void Register(Action callback) => _listeners.Add(callback);
+    public void Unregister(Action callback) => _listeners.Remove(callback);
 }

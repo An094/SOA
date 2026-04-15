@@ -4,12 +4,10 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New FloatVariable", menuName = "SharedVariables/FloatVariable")]
 public class FloatVariable : ScriptableObject
 {
-    [SerializeField] private float _initialValue;
+    public float _initialValue;
+    [SerializeField] private float _value;
 
-    //[NonSerialized] public float _value;
-    public float _value;
-
-    public event Action<float> OnValueChanged = delegate { };
+    //public event Action<float> OnValueChanged = delegate { };
 
     private void OnEnable() => _value = _initialValue;
 
@@ -20,7 +18,7 @@ public class FloatVariable : ScriptableObject
         {
             if (Mathf.Approximately(value, _initialValue)) return;
             _value = value;
-            OnValueChanged?.Invoke(_value);
+            //OnValueChanged?.Invoke(_value);
         }
     }
 }
